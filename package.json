@@ -9,7 +9,9 @@
   "dependencies": {
     "firebase": "7.17.0",
     "firebase-admin": "9.0.0",
+    "joi": "^17.4.0",
     "next": "latest",
+    "nextjs-progressbar": "0.0.7",
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   },
