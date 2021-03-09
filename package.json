@@ -7,13 +7,17 @@
     "start": "next start"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
     "firebase": "7.17.0",
     "firebase-admin": "9.0.0",
     "joi": "^17.4.0",
     "next": "latest",
     "nextjs-progressbar": "0.0.7",
     "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react-dom": "^16.13.0",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
+    "redux-persist": "^6.0.0"
   },
   "license": "MIT"
 }

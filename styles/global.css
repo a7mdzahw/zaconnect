@@ -9,6 +9,10 @@
   font-size: 0.6rem;
 }
 
+.w-2 {
+  font-size: 5rem;
+}
+
 .card-img-top {
   width: 300px;
   /* height: 300px; */
