@@ -1,4 +1,5 @@
 @import "https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css";
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
 .vh-75 {
   height: 75vh;
@@ -16,4 +17,15 @@
 .card-img-top {
   width: 300px;
   /* height: 300px; */
+}
+
+.bag {
+  position: relative;
+  font-size: 1.5rem;
+}
+
+.item-count {
+  position: relative;
+  top: 10px;
+  left: -20px;
 }

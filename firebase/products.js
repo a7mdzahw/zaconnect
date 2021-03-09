@@ -20,15 +20,15 @@ export const create = async (product) => {
   await ref.add(product);
 };
 
+export const image = (file) => {
+  const storageRef = storage.ref();
+  const task = storageRef
+    .child(`products/${file.name}-${Date.now()}.jpg`)
+    .put(file);
+  return task;
+};
+
 export const remove = async (product) => {
   const id = await getByUrl(product.photoURL);
   await ref.doc(`${id}`).delete();
-};
-
-export const image = async (file) => {
-  const storageRef = storage.ref();
-  const imageFile = storageRef.child(`products/${Date.now()}.jpg`);
-  await imageFile.put(file);
-  const url = await imageFile.getDownloadURL();
-  return url;
 };

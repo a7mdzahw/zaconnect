@@ -1,34 +1,51 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import * as productService from "../firebase/products";
+import { itemAdded } from "../store/cart";
+import { productRemoved, productsRecieved } from "../store/products";
 
 const products = ({ products }) => {
   let unsubscribe;
-  const [list, setList] = React.useState(products);
+  const dispatch = useDispatch();
+  const { list, loading } = useSelector((state) => state.products);
 
   React.useEffect(() => {
-    return () => unsubscribe();
+    dispatch(productsRecieved(products));
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
-  const handleRemove = (product) => {
-    unsubscribe = productService.ref.onSnapshot((snap) => {
-      const filtered = list.filter((p) => p.photoURL !== product.photoURL);
-      setList(filtered);
-    });
-  };
-
   return (
-    <div className="d-flex flex-wrap gap-2 justify-content-center">
-      {list.map((p) => (
-        <Product key={p.photoURL} product={p} onRemove={handleRemove} />
-      ))}
-    </div>
+    <>
+      {loading && (
+        <div className="spinner-border text-success">
+          <span className="visually-hidden">Loading</span>
+        </div>
+      )}
+      <div className="d-flex flex-wrap gap-2 justify-content-center">
+        {list.map((p) => (
+          <Product key={p.photoURL} product={p} />
+        ))}
+      </div>
+    </>
   );
 };
 
-const Product = ({ product, onRemove }) => {
-  const handleProductRemove = (product) => {
-    onRemove(product);
-    productService.remove(product);
+const Product = ({ product }) => {
+  const { list } = useSelector((state) => state.products);
+  const dispatch = useDispatch();
+
+  const handleProductRemove = async (product) => {
+    const old = [...list];
+    try {
+      dispatch(productRemoved(product));
+      await productService.remove(product);
+    } catch (ex) {
+      dispatch(productsRecieved(old));
+      alert(ex.message);
+    }
   };
   return (
     <div className="card">
@@ -46,7 +63,12 @@ const Product = ({ product, onRemove }) => {
         </button>
       </div>
       <div className="card-footer">
-        <button className="btn btn-sm btn-info w-100">+ ADD TO CART</button>
+        <button
+          className="btn btn-sm btn-info w-100"
+          onClick={() => dispatch(itemAdded(product))}
+        >
+          + ADD TO CART
+        </button>
       </div>
     </div>
   );

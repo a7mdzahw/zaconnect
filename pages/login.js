@@ -1,11 +1,13 @@
 import router from "next/router";
 import React from "react";
+import { useSelector } from "react-redux";
 
 import LoginForm from "../components/LoginForm";
 
 const login = () => {
+  const { isAuth } = useSelector((s) => s.users);
   React.useEffect(() => {
-    if (false) router.push("/");
+    if (isAuth) router.push("/");
   }, []);
   return (
     <div>

@@ -9,7 +9,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="container">
-        <h1 className="title display-4">CONNECT WITH ME</h1>
+        <h1 className="title display-6">WELCOME TO ZACONNECT STORE </h1>
         <ProductForm />
       </main>
     </>

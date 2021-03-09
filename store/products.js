@@ -8,7 +8,14 @@ const productsSlice = createSlice({
       products.list = action.payload;
       products.loading = false;
     },
+    productRemoved: (products, action) => {
+      products.list = products.list.filter(
+        (p) => p.photoURL !== action.payload.photoURL
+      );
+    },
   },
 });
+
+export const { productsRecieved, productRemoved } = productsSlice.actions;
 
 export default productsSlice.reducer;

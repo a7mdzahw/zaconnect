@@ -1,88 +1,81 @@
 import React from "react";
 import Link from "next/link";
-
-import { loginWithGoogle, signOut } from "../firebase/utils";
-import { useUser } from "../context/userContext";
-
 import router from "next/router";
 
-const Navbar = () => {
-  const { user } = useUser();
+import { useSelector } from "react-redux";
+import { Navbar, Nav, Button, Container } from "react-bootstrap";
 
+import { signOut } from "../firebase/utils";
+import { itemsCount } from "../store/cart";
+
+import CartIcon from "../components/shared/CartIcon";
+
+const NavbarComponent = () => {
+  const { current: user, isAuth } = useSelector((state) => state.users);
+  const count = useSelector(itemsCount);
+
+  const handletoggle = () => {
+    console.log("TTog");
+  };
   return (
-    <nav className="navbar navbar-dark navbar-expand-md bg-dark">
-      <div className="container">
-        <Link href="/">
-          <a className="navbar-brand">ZACONNECT</a>
-        </Link>
+    <>
+      <Navbar expand="md" onToggle={handletoggle}>
+        <Container>
+          <Link href="/">
+            <a className="navbar-brand">
+              <i className="bi bi-basket"></i> ZACONNECT
+            </a>
+          </Link>
+          <Nav>
+            <Nav.Item>
+              <CartIcon count={count} />
+            </Nav.Item>
+            <Nav.Item>
+              <Link href={`/products`}>
+                <a className="nav-link">
+                  {" "}
+                  <i className="bi bi-cash"></i> PRODUCTS
+                </a>
+              </Link>
+            </Nav.Item>
 
-        <ul className="navbar-nav">
-          {user ? (
-            <>
-              <li className="nav-item">
-                <Link href={`/products`}>
-                  <a className="nav-link">PRODUCTS</a>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href={`/users`}>
-                  <a className="nav-link">USERS</a>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link href={`/profile/${user.uid}`}>
-                  <a className="nav-link">PROFILE</a>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <button
-                  className="btn btn-danger btn-sm nav-link"
-                  onClick={signOut}
-                >
-                  LOGOUT
-                </button>
-              </li>
-            </>
-          ) : (
-            <>
-              <li className="nav-item">
-                <button
-                  className="btn btn-success btn-sm nav-link"
-                  onClick={() => router.push("/login")}
-                >
-                  LOGIN
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className="btn btn-success btn-sm mx-5 nav-link"
-                  onClick={() => router.push("/register")}
-                >
-                  SIGN UP
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className="btn btn-info btn-sm nav-link"
-                  onClick={loginWithGoogle}
-                >
-                  LOGIN WITH GOOGLE
-                </button>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </nav>
+            {isAuth && user ? (
+              <>
+                <Nav.Item>
+                  <Link href={`/users`}>
+                    <a className="nav-link">
+                      <i className="bi bi-person"></i>
+                      USERS
+                    </a>
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Link href={`/profile/${user.uid}`}>
+                    <a className="nav-link">PROFILE</a>
+                  </Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Button variant="danger" className="nav-link" onClick={signOut}>
+                    LOGOUT
+                  </Button>
+                </Nav.Item>
+              </>
+            ) : (
+              <>
+                <Nav.Item>
+                  <Nav.Link onClick={() => router.push("/login")}>LOGIN</Nav.Link>
+                </Nav.Item>
+
+                <Nav.Item>
+                  <Nav.Link onClick={() => router.push("/register")}>SIGN UP</Nav.Link>
+                </Nav.Item>
+              </>
+            )}
+          </Nav>
+        </Container>
+      </Navbar>
+    </>
   );
 };
 
-const Spinner = () => {
-  return (
-    <div className="spinner-border text-light">
-      <span className="visually-hidden">Loading...</span>
-    </div>
-  );
-};
-
-export default Navbar;
+export default NavbarComponent;

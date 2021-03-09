@@ -1,19 +1,31 @@
-import UserProvider, { useUser } from "../context/userContext";
+import { useEffect } from "react";
 import Progress from "nextjs-progressbar";
-import { auth } from "../firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { save_user } from "../firebase/utils";
 
+import { auth } from "../firebase";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/lib/integration/react";
-
 import { store, persistor } from "../store";
+import { userAuthed } from "../store/users";
 
 import Navbar from "../components/Navbar";
 
 import "../styles/global.css";
-import { userAuthed } from "../store/users";
 
 // Custom App to wrap it with context provider
 export default function App({ Component, pageProps }) {
+  return (
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <Root component={Component} pageProps={pageProps} />
+      </PersistGate>
+    </Provider>
+  );
+}
+
+const Root = ({ component: Component, pageProps }) => {
+  const dispatch = useDispatch();
   useEffect(() => {
     // Listen authenticated user
     const unsubscriber = auth.onAuthStateChanged(async (user) => {
@@ -25,31 +37,19 @@ export default function App({ Component, pageProps }) {
           await save_user(user);
           // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
           dispatch(userAuthed({ uid, displayName, email, photoURL }));
-        } else setUser(null);
+        } else dispatch(userAuthed(null));
       } catch (error) {
         // Most probably a connection error. Handle appropriately.
         console.error(error.message);
-      } finally {
-        setLoadingUser(false);
       }
     });
 
     return () => unsubscriber();
   }, []);
 
-  return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <Root component={Component} pageProps={pageProps} />
-      </PersistGate>
-    </Provider>
-  );
-}
+  const { loading, current } = useSelector((state) => state.users);
 
-const Root = ({ component: Component, pageProps }) => {
-  const { loadingUser } = useUser();
-
-  if (loadingUser)
+  if (loading)
     return (
       <div className="d-flex vh-75 justify-content-center align-items-center">
         <div className="spinner-border w-2">
