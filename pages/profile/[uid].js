@@ -1,7 +1,16 @@
 import Head from "next/head";
+import router from "next/router";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 import { db } from "../../firebase";
 
 export default function Profile({ user, error }) {
+  const { isAuth } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    if (!isAuth) router.push("/");
+  }, [isAuth]);
+
   return (
     <div className="container">
       <Head>

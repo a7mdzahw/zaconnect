@@ -7,7 +7,7 @@ const register = () => {
   const { isAuth } = useSelector((s) => s.users);
   React.useEffect(() => {
     if (isAuth) router.push("/");
-  }, []);
+  }, [isAuth]);
   return (
     <div>
       <RegisterForm />

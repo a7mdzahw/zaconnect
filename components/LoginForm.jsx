@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 import { auth } from "../firebase";
 import { loginWithGoogle } from "../firebase/utils";
 
@@ -11,6 +12,7 @@ const INITIAL_STATE = {
 
 const LoginForm = () => {
   const [data, setData] = React.useState(INITIAL_STATE);
+  const [loading, setLoading] = React.useState(false);
 
   const handleChange = ({ target }) => {
     setData({ ...data, [target.name]: target.value });
@@ -18,10 +20,14 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      await auth.signInWithEmailAndPassword(data.email, data.password);
+      const { user } = await auth.signInWithEmailAndPassword(data.email, data.password);
+      toast.success(`Welcome, ${user.displayName}`);
     } catch (ex) {
-      alert(ex.message);
+      toast.error(ex.message);
+    } finally {
+      setLoading(false);
     }
 
     setData(INITIAL_STATE);
@@ -38,6 +44,11 @@ const LoginForm = () => {
           <button className="btn-primary btn-sm btn btn-block w-75">
             {" "}
             <i className="bi bi-person"></i> LOGIN
+            {loading && (
+              <div className="text-success spinner-border">
+                <span className="visually-hidden">Loading</span>
+              </div>
+            )}
           </button>
         </div>
       </form>

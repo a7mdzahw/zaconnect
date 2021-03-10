@@ -1,9 +1,12 @@
 import React from "react";
 import joi from "joi";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
 
-import { Alert } from "react-bootstrap";
+import { Alert, ProgressBar } from "react-bootstrap";
 
 import * as products from "../firebase/products";
+import { addProduct } from "../store/products";
 import Input from "./shared/Input";
 
 const INITIAL_STATE = {
@@ -14,6 +17,7 @@ const INITIAL_STATE = {
 };
 
 const ProductForm = () => {
+  const dispatch = useDispatch();
   const [data, setData] = React.useState(INITIAL_STATE);
   const [file, setFile] = React.useState(null);
   const [errors, setErrors] = React.useState([]);
@@ -47,39 +51,40 @@ const ProductForm = () => {
 
     setLoading(true);
     try {
-      try {
-        const task = products.image(file);
-        await task.on(
-          "state_changed",
-          (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log("Upload is " + progress + "% done");
-            setProgress(progress);
-            switch (snapshot.state) {
-              case "paused":
-                console.log("Upload is paused");
-                break;
-              case "running":
-                console.log("Upload is running");
-                break;
-            }
-          },
-          (error) => {
-            console.log(error);
-          },
-          () => {
-            task.snapshot.ref.getDownloadURL().then((downloadURL) => {
-              console.log("File available at", downloadURL);
-              setData({ ...data, photoURL: downloadURL });
-            });
+      const task = products.image(file);
+      await task.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setProgress(progress);
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
           }
-        );
-      } catch (ex) {
-        alert("ERROR UPLOAD ", ex.message);
-      }
-      await products.create({ ...data });
+        },
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          task.snapshot.ref.getDownloadURL().then((downloadURL) => {
+            console.log("File available at", downloadURL);
+
+            products
+              .create({ ...data, photoURL: downloadURL })
+              .then(() => {
+                toast.success("PRODUCT ADDED");
+                dispatch(addProduct({ ...data, photoURL: downloadURL }));
+              })
+              .catch((err) => toast.error(err.message));
+          });
+        }
+      );
     } catch (ex) {
-      alert(ex.message);
+      toast.error(ex.message);
     }
 
     setData(INITIAL_STATE);
@@ -98,7 +103,7 @@ const ProductForm = () => {
 
             <Input id="Image" type="file" onChange={addFile} label="Upload Image" />
           </div>
-          {progress != 0 && <progress value={progress} max="100" className="w-75 progress-bar" />}
+          {progress != 0 && <ProgressBar animated now={progress} className="w-75" />}
           <button className="btn-primary btn-sm btn btn-block w-75">
             SUBMIT PRODUCT{" "}
             {loading && (

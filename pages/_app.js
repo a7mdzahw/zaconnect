@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 import Progress from "nextjs-progressbar";
+
+import { ToastContainer } from "react-toastify";
+
 import { useDispatch, useSelector } from "react-redux";
 import { save_user } from "../firebase/utils";
 
@@ -59,8 +62,9 @@ const Root = ({ component: Component, pageProps }) => {
     );
   return (
     <>
-      <Progress />
+      <Progress options={{ showSpinner: false }} />
       <Navbar />
+      <ToastContainer />
       <div className="container my-3">
         <Component {...pageProps} />
       </div>

@@ -1,5 +1,4 @@
 import Head from "next/head";
-import ProductForm from "../components/ProductForm";
 
 export default function Home() {
   return (
@@ -8,9 +7,8 @@ export default function Home() {
         <title>ZACONNECT</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="container">
-        <h1 className="title display-6">WELCOME TO ZACONNECT STORE </h1>
-        <ProductForm />
+      <main className="container d-flex justify-content-center">
+        <h1 className="title text-center mt-5 w-50 display-3">WELCOME TO ZACONNECT STORE </h1>
       </main>
     </>
   );
