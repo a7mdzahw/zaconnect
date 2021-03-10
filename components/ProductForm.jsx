@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { Alert, ProgressBar } from "react-bootstrap";
 
 import * as products from "../firebase/products";
+import { upload } from "../firebase/utils";
 import { addProduct } from "../store/products";
 import Input from "./shared/Input";
 
@@ -52,35 +53,18 @@ const ProductForm = () => {
     setLoading(true);
     try {
       const task = products.image(file);
-      await task.on(
-        "state_changed",
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setProgress(progress);
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-          }
-        },
-        (error) => {
-          console.log(error);
-        },
-        () => {
-          task.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            console.log("File available at", downloadURL);
-
-            products
-              .create({ ...data, photoURL: downloadURL })
-              .then(() => {
-                toast.success("PRODUCT ADDED");
-                dispatch(addProduct({ ...data, photoURL: downloadURL }));
-              })
-              .catch((err) => toast.error(err.message));
-          });
+      await upload(
+        task,
+        (percen) => setProgress(percen),
+        (err) => toast.error(err.message),
+        (url) => {
+          products
+            .create({ ...data, photoURL: url })
+            .then(() => {
+              toast.success("PRODUCT ADDED");
+              dispatch(addProduct({ ...data, photoURL: url }));
+            })
+            .catch((err) => toast.error(err.message));
         }
       );
     } catch (ex) {

@@ -1,4 +1,5 @@
 import React from "react";
+import router from "next/router";
 import { useSelector } from "react-redux";
 
 import RegisterForm from "../components/RegisterForm";

@@ -22,9 +22,7 @@ export const create = async (product) => {
 
 export const image = (file) => {
   const storageRef = storage.ref();
-  const task = storageRef
-    .child(`products/${file.name}-${Date.now()}.jpg`)
-    .put(file);
+  const task = storageRef.child(`products/${file.name}-${Date.now()}.jpg`).put(file);
   return task;
 };
 
