@@ -10,9 +10,9 @@ const usersSlice = createSlice({
     },
     userAuthed: (users, action) => {
       users.current = action.payload;
+      users.loading = false;
       if (!action.payload) users.isAuth = false;
       else users.isAuth = true;
-      users.loading = false;
     },
   },
 });
