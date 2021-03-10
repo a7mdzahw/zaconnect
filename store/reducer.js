@@ -13,6 +13,6 @@ const reducer = combineReducers({
 });
 
 export default persistReducer(
-  { key: "root", whitelist: ["users", "cart"], storage },
+  { key: "root", whitelist: [ "cart"], storage },
   reducer
 );
