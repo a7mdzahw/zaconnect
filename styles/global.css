@@ -33,6 +33,6 @@ body {
 
 .item-count {
   position: relative;
-  top: 12px;
-  left: -25px;
+  top: 1%;
+  right: 20%;
 }

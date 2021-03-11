@@ -12,3 +12,7 @@ export const image = (file) => {
   const ref = storage.ref();
   return ref.child(`users/${file.name}-${Date.now()}.jpg`).put(file);
 };
+
+export const remove = (uid) => {
+  return db.doc(`users/${uid}`).delete();
+};

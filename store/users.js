@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const usersSlice = createSlice({
   name: "users",
-  initialState: { list: [], loading: true, current: null, isAuth: false },
+  initialState: { list: [], list_loading: true, current: null, loading: true, isAuth: false },
   reducers: {
     usersRecieved: (users, action) => {
       users.list = action.payload;
-      users.loading = false;
+      users.list_loading = false;
     },
     userAuthed: (users, action) => {
       users.current = action.payload;
