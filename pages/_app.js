@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { save_user } from "../firebase/utils";
 
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/lib/integration/react";
 import { store, persistor } from "../store";
@@ -28,9 +28,11 @@ export default function App({ Component, pageProps }) {
 }
 
 const Root = ({ component: Component, pageProps }) => {
+  const { loading, current } = useSelector((state) => state.users);
   const dispatch = useDispatch();
+  const usersRef = db.collection("users");
   useEffect(() => {
-    const unsubscriber = auth.onAuthStateChanged(async (user) => {
+    const unsubscriber1 = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
           const userRef = await save_user(user);
@@ -42,10 +44,17 @@ const Root = ({ component: Component, pageProps }) => {
       }
     });
 
-    return () => unsubscriber();
-  }, []);
+    const unsubscriber2 = usersRef.onSnapshot(async (snap) => {
+      if (!current) return;
+      const user = (await usersRef.doc(current.uid).get()).data();
+      dispatch(userAuthed(user));
+    });
 
-  const { loading } = useSelector((state) => state.users);
+    return () => {
+      unsubscriber1();
+      unsubscriber2();
+    };
+  }, []);
 
   if (loading)
     return (
