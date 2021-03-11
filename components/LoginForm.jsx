@@ -1,4 +1,5 @@
 import React from "react";
+import router from "next/router";
 import { Modal, Spinner } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { auth } from "../firebase";
