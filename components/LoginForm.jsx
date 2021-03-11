@@ -19,7 +19,13 @@ const LoginForm = () => {
   const handleChange = ({ target }) => {
     setData({ ...data, [target.name]: target.value });
   };
-
+  const handleGoogleLogin = () => {
+    loginWithGoogle()
+      .then(({ user }) => {
+        toast.success(`Welcome ${user.displayName}`);
+      })
+      .catch((err) => toast.error(err.message));
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setShowLoginSpinner(true);
@@ -42,14 +48,14 @@ const LoginForm = () => {
             <Input id="email" type="email" onChange={handleChange} label="Email" value={data.email} />
             <Input id="password" type="password" onChange={handleChange} label="Password" value={data.password} />
           </div>
-          <button className="btn-primary btn-sm btn btn-block w-75">
+          <button className="btn-primary btn-sm btn btn-block w-75" type="submit">
             <i className="bi bi-person"></i> LOGIN
           </button>
         </div>
       </form>
 
       <div className="d-flex justify-content-center">
-        <button className="nav-link btn m-2 btn-outline-success  text-success" onClick={loginWithGoogle}>
+        <button className="nav-link btn m-2 btn-outline-success  text-success" onClick={handleGoogleLogin}>
           <i className="bi bi-google display-6"></i>
         </button>
       </div>

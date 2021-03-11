@@ -1,4 +1,5 @@
 import router from "next/router";
+import Head from "next/head";
 import React from "react";
 import { useSelector } from "react-redux";
 
@@ -9,8 +10,13 @@ const login = () => {
   React.useEffect(() => {
     if (isAuth) router.push("/");
   }, [isAuth]);
+
+  if (isAuth) return null;
   return (
     <div>
+      <Head>
+        <title>LOGIN</title>
+      </Head>
       <LoginForm />
     </div>
   );

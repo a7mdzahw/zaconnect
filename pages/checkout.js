@@ -1,5 +1,6 @@
 import React from "react";
 import router from "next/router";
+import Head from "next/head";
 import { useSelector, useDispatch } from "react-redux";
 import { itemRemoved, itemsTotal } from "../store/cart";
 const checkout = () => {
@@ -8,16 +9,24 @@ const checkout = () => {
 
   if (!items.length)
     return (
-      <div className="d-flex flex-column align-items-center">
-        <h2 className="display-3 text-center mt-5 pt-4 text-danger">YOUR CART IS EMPTY</h2>
-        <button className="btn btn-outline-info text-dark w-50" onClick={() => router.push("/products")}>
-          {" "}
-          <i className="bi bi-arrow-right"></i> ADD PRODUCTS
-        </button>
-      </div>
+      <>
+        <Head>
+          <title>CHECKOUT</title>
+        </Head>
+        <div className="d-flex flex-column align-items-center">
+          <h2 className="display-3 text-center mt-5 pt-4 text-danger">YOUR CART IS EMPTY</h2>
+          <button className="btn btn-outline-info text-dark w-50" onClick={() => router.push("/products")}>
+            {" "}
+            <i className="bi bi-arrow-right"></i> ADD PRODUCTS
+          </button>
+        </div>
+      </>
     );
   return (
     <div>
+      <Head>
+        <title>CHECKOUT</title>
+      </Head>
       {items.map((item) => (
         <Item item={item} key={item.photoURL} />
       ))}

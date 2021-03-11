@@ -1,4 +1,6 @@
 import React from "react";
+import Head from "next/head";
+import router from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import { getUsers } from "../firebase/users";
@@ -6,7 +8,7 @@ import { usersRecieved } from "../store/users";
 
 const users = () => {
   const dispatch = useDispatch();
-  const { list: users, list_loading } = useSelector((state) => state.users);
+  const { list: users, list_loading, isAuth } = useSelector((state) => state.users);
 
   const get_users = async () => {
     const users = await getUsers();
@@ -14,17 +16,28 @@ const users = () => {
   };
 
   React.useEffect(() => {
+    if (!isAuth) router.push("/login");
     get_users();
   }, []);
 
+  if (!isAuth) return null;
+
   if (list_loading)
     return (
-      <div className="d-flex justify-content-center align-items-center vh-75">
-        <Spinner variant="success" animation="grow" />
-      </div>
+      <>
+        <Head>
+          <title>USERS</title>
+        </Head>
+        <div className="d-flex justify-content-center align-items-center vh-75">
+          <Spinner variant="success" animation="grow" />
+        </div>
+      </>
     );
   return (
     <div>
+      <Head>
+        <title>USERS</title>
+      </Head>
       {users.map((user) => (
         <UserCard key={user.uid} user={user} />
       ))}

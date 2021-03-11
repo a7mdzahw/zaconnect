@@ -3,7 +3,7 @@ import joi from "joi";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 
-import { Alert, ProgressBar } from "react-bootstrap";
+import { Alert, ProgressBar, Modal } from "react-bootstrap";
 
 import * as products from "../firebase/products";
 import { upload } from "../firebase/utils";
@@ -22,7 +22,7 @@ const ProductForm = () => {
   const [data, setData] = React.useState(INITIAL_STATE);
   const [file, setFile] = React.useState(null);
   const [errors, setErrors] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [show, setShow] = React.useState(false);
   const [progress, setProgress] = React.useState(0);
 
   const handleChange = ({ target }) => {
@@ -45,12 +45,13 @@ const ProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShow(true);
+    setErrors([]);
     const { error } = validate(data);
     if (error) {
+      setShow(false);
       return setErrors([error.details[0].message, ...errors]);
     }
-
-    setLoading(true);
     try {
       const task = products.image(file);
       await upload(
@@ -62,43 +63,47 @@ const ProductForm = () => {
             .create({ ...data, photoURL: url })
             .then(() => {
               toast.success("PRODUCT ADDED");
+
               dispatch(addProduct({ ...data, photoURL: url }));
             })
-            .catch((err) => toast.error(err.message));
+            .catch((err) => {
+              console.log("here2");
+              toast.error(err.message);
+            })
+            .finally(() => setShow(false));
         }
       );
     } catch (ex) {
+      setShow(false);
       toast.error(ex.message);
+      toast.error("PLEASE ADD PIC FILE !!");
     }
-
-    setData(INITIAL_STATE);
-    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="card">
-      <div className="card-body">
-        {errors.length ? <Alert variant="danger">{errors[0]}</Alert> : null}
-        <div className="d-flex align-items-center gap-2 mt-3 flex-column">
-          <div className="w-75">
-            <Input id="name" type="text" onChange={handleChange} label="Name" value={data.name} />
-            <Input id="category" type="text" onChange={handleChange} label="Category" value={data.category} />
-            <Input id="price" type="text" onChange={handleChange} label="Price" value={data.price} />
+    <>
+      <form onSubmit={handleSubmit} className="card">
+        <div className="card-body">
+          {errors.length ? <Alert variant="danger">{errors[0]}</Alert> : null}
+          <div className="d-flex align-items-center gap-2 mt-3 flex-column">
+            <div className="w-75">
+              <Input id="name" type="text" onChange={handleChange} label="Name" value={data.name} />
+              <Input id="category" type="text" onChange={handleChange} label="Category" value={data.category} />
+              <Input id="price" type="text" onChange={handleChange} label="Price" value={data.price} />
 
-            <Input id="Image" type="file" onChange={addFile} label="Upload Image" />
+              <Input id="Image" type="file" onChange={addFile} label="Upload Image" />
+            </div>
+            <button className="btn-primary btn-sm btn btn-block w-75">SUBMIT PRODUCT</button>
           </div>
-          {progress != 0 && <ProgressBar animated now={progress} className="w-75" />}
-          <button className="btn-primary btn-sm btn btn-block w-75">
-            SUBMIT PRODUCT{" "}
-            {loading && (
-              <div className="spinner-border text-sm">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            )}
-          </button>
         </div>
-      </div>
-    </form>
+      </form>
+      <Modal show={show} centered className="z-index-5">
+        <Modal.Body className="d-flex align-items-center flex-column p-3">
+          <h2 className="display-6 mx-3">Please Wait</h2>
+          <ProgressBar animated now={progress} className="w-75" />
+        </Modal.Body>
+      </Modal>
+    </>
   );
 };
 

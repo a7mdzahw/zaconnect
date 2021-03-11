@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "next/head";
 import { useDispatch, useSelector } from "react-redux";
 
 import ProductForm from "../components/ProductForm";
@@ -32,12 +33,21 @@ const products = () => {
   const toggleModel = () => setShow((show) => !show);
   if (loading)
     return (
-      <div className="d-flex justify-content-center align-items-center vh-75">
-        <Spinner animation="grow" variant="success" />
-      </div>
+      <>
+        <Head>
+          <title>PRODUCTS</title>
+        </Head>
+        <div className="d-flex justify-content-center align-items-center vh-75">
+          <Spinner animation="grow" variant="success" />
+        </div>
+      </>
     );
   return (
     <>
+      <Head>
+        <title>PRODUCTS</title>
+      </Head>
+
       {isAuth && (
         <button className="btn btn-sm btn-info m-4" onClick={toggleModel}>
           <i className="bi bi-bag"></i> ADD NEW PRODUCT

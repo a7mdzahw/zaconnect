@@ -30,19 +30,14 @@ export default function App({ Component, pageProps }) {
 const Root = ({ component: Component, pageProps }) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    // Listen authenticated user
     const unsubscriber = auth.onAuthStateChanged(async (user) => {
       try {
         if (user) {
-          // User is signed in.
-          const { uid, displayName, email, photoURL } = user;
-          // You could also look for the user doc in your Firestore (if you have one):
-          await save_user(user);
-          // const userDoc = await firebase.firestore().doc(`users/${uid}`).get()
-          dispatch(userAuthed({ uid, displayName, email, photoURL }));
+          const userRef = await save_user(user);
+          const userDoc = (await userRef.get()).data();
+          dispatch(userAuthed(userDoc));
         } else dispatch(userAuthed(null));
       } catch (error) {
-        // Most probably a connection error. Handle appropriately.
         console.error(error.message);
       }
     });
@@ -50,7 +45,7 @@ const Root = ({ component: Component, pageProps }) => {
     return () => unsubscriber();
   }, []);
 
-  const { loading, current } = useSelector((state) => state.users);
+  const { loading } = useSelector((state) => state.users);
 
   if (loading)
     return (

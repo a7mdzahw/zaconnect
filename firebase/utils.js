@@ -1,9 +1,10 @@
+import { toast } from "react-toastify";
 import firebase, { auth, db } from "./index";
 
 // AUTH
-export const loginWithGoogle = async () => {
+export const loginWithGoogle = () => {
   const provider = new firebase.auth.GoogleAuthProvider();
-  await auth.signInWithPopup(provider);
+  return auth.signInWithPopup(provider);
 };
 
 export const signOut = async () => {
