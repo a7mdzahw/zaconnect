@@ -28,7 +28,7 @@ export const save_user = async (user) => {
 };
 
 export const upload = (task, onUpload, onError, onFinish) => {
-  task.on(
+  return task.on(
     "state_changed",
     (snapshot) => {
       const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;

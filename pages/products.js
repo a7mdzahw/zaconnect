@@ -7,15 +7,15 @@ import { Modal, Spinner } from "react-bootstrap";
 
 import * as productService from "../firebase/products";
 import { itemAdded } from "../store/cart";
-import { productRemoved, productsRecieved } from "../store/products";
-import { toast } from "react-toastify";
+import { productRemoved, productsRecieved, filterProducts } from "../store/products";
+import { toast } from "react-hot-toast";
 
 const products = () => {
   const [show, setShow] = React.useState(false);
 
   let unsubscribe;
   const dispatch = useDispatch();
-  const { list, loading } = useSelector((state) => state.products);
+  const { list, filteredList, loading } = useSelector((state) => state.products);
   const { isAuth } = useSelector((s) => s.users);
 
   const get_products = async () => {
@@ -31,6 +31,11 @@ const products = () => {
   }, []);
 
   const toggleModel = () => setShow((show) => !show);
+
+  const handleSearch = ({ target }) => {
+    dispatch(filterProducts(target.value));
+  };
+
   if (loading)
     return (
       <>
@@ -53,6 +58,12 @@ const products = () => {
           <i className="bi bi-bag"></i> ADD NEW PRODUCT
         </button>
       )}
+      <input
+        name="search"
+        placeholder="Search Products..."
+        onChange={handleSearch}
+        className="form-control  w-25 mb-2 ms-auto"
+      />
       <div className="d-flex flex-wrap gap-2 justify-content-center">
         <Modal show={show} onHide={toggleModel} centered>
           <Modal.Header className="display-5 text-center">ADD NEW PRODUCT</Modal.Header>
@@ -61,7 +72,7 @@ const products = () => {
           </Modal.Body>
         </Modal>
 
-        {list.map((p) => (
+        {filteredList.map((p) => (
           <Product key={p.photoURL} product={p} />
         ))}
       </div>
@@ -71,6 +82,7 @@ const products = () => {
 
 const Product = ({ product }) => {
   const { list } = useSelector((state) => state.products);
+  const { isAuth } = useSelector((state) => state.users);
   const dispatch = useDispatch();
 
   const handleProductRemove = async (product) => {
@@ -93,16 +105,18 @@ const Product = ({ product }) => {
           <h2 className="display-6">{product.name.toUpperCase()}</h2>
           <p className="text-success">${product.price} LE</p>
         </div>
-        <button className="btn btn-sm btn-danger h-50" onClick={() => handleProductRemove(product)}>
-          <i className="bi bi-trash"></i>
-        </button>
+        {isAuth && (
+          <button className="btn btn-sm btn-danger h-50" onClick={() => handleProductRemove(product)}>
+            <i className="bi bi-trash"></i>
+          </button>
+        )}
       </div>
       <div className="card-footer">
         <button
           className="btn btn-sm text-dark w-100 btn-outline-info"
           onClick={() => {
             dispatch(itemAdded(product));
-            toast.info(`${product.name} Added to Cart`);
+            toast.success(`${product.name} Added to Cart`);
           }}
         >
           + ADD TO CART

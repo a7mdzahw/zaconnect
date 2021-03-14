@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Modal, Spinner } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { auth } from "../firebase";
 import { loginWithGoogle } from "../firebase/utils";
 
@@ -55,7 +55,7 @@ const LoginForm = () => {
       </form>
 
       <div className="d-flex justify-content-center">
-        <button className="nav-link btn m-2 btn-outline-success  text-success" onClick={handleGoogleLogin}>
+        <button className="nav-link btn m-2 btn-outline-dark text-success" onClick={handleGoogleLogin}>
           <i className="bi bi-google display-6"></i>
         </button>
       </div>

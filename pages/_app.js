@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import Progress from "nextjs-progressbar";
 
 import { ToastContainer } from "react-toastify";
+import { Toaster } from "react-hot-toast";
 
 import { useDispatch, useSelector } from "react-redux";
 import { save_user } from "../firebase/utils";
@@ -37,6 +38,7 @@ const Root = ({ component: Component, pageProps }) => {
         if (user) {
           const userRef = await save_user(user);
           const userDoc = (await userRef.get()).data();
+          if (!user.displayName) setTimeout(() => dispatch(userAuthed(userDoc)), 1000, [user.displayName]);
           dispatch(userAuthed(userDoc));
         } else dispatch(userAuthed(null));
       } catch (error) {
@@ -69,6 +71,7 @@ const Root = ({ component: Component, pageProps }) => {
       <Progress options={{ showSpinner: false }} />
       <Navbar />
       <ToastContainer />
+      <Toaster position="bottom-right" />
       <div className="container my-3">
         <Component {...pageProps} />
       </div>

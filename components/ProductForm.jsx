@@ -1,6 +1,6 @@
 import React from "react";
 import joi from "joi";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 
 import { Alert, ProgressBar, Modal } from "react-bootstrap";
