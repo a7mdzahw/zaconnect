@@ -59,6 +59,7 @@ const products = () => {
         </button>
       )}
       <input
+        autoFocus
         name="search"
         placeholder="Search Products..."
         onChange={handleSearch}
@@ -72,9 +73,11 @@ const products = () => {
           </Modal.Body>
         </Modal>
 
-        {filteredList.map((p) => (
-          <Product key={p.photoURL} product={p} />
-        ))}
+        {filteredList.length ? (
+          filteredList.map((p) => <Product key={p.photoURL} product={p} />)
+        ) : (
+          <p className="alert alert-warning display-6 mt-5">NO PRODUCTS MATCHING SEARCH QUERY</p>
+        )}
       </div>
     </>
   );
